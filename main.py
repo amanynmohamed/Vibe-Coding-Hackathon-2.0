@@ -1,29 +1,68 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import PlainTextResponse
+from fastapi import FastAPI, Depends, HTTPException, Request
+from fastapi.responses import Response
+from sqlalchemy.orm import Session
 from twilio.twiml.messaging_response import MessagingResponse
-from urllib.parse import parse_qs
 
+import models, crud, schemas
+from database import SessionLocal, engine
+
+# ✅ Create FastAPI app BEFORE using it
 app = FastAPI()
 
+# ✅ Create database tables
+models.Base.metadata.create_all(bind=engine)
+
+# ✅ Dependency to get DB session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+# ✅ WhatsApp webhook endpoint
 @app.post("/whatsapp")
 async def whatsapp_webhook(request: Request):
-    body_bytes = await request.body()
-    parsed = parse_qs(body_bytes.decode())
-    incoming_msg = parsed.get("Body", [""])[0].strip().lower()
 
-    print(f"Incoming message: {incoming_msg}")  # For debugging
+    form = await request.form()
+    incoming_msg = form.get("Body", "").strip().lower()
 
-    response = MessagingResponse()
+    # Respond with a welcome message
+    resp = MessagingResponse()
+    msg = resp.message()
 
-    if "hi" in incoming_msg:
-        response.message("👋 Welcome to FundiLink!\nWhat service do you need? (e.g., plumber, electrician)")
-    elif "plumber" in incoming_msg:
-        response.message("🛠️ Found 2 plumbers:\n1. John (⭐ 4.5)\n2. Grace (⭐ 4.7)\nReply with 1 or 2 to book.")
-    elif incoming_msg in ["1", "2"]:
-        response.message("When do you need the service? (Today or Tomorrow?)")
-    elif incoming_msg in ["today", "tomorrow"]:
-        response.message("To confirm your booking, pay KES 500 via M-Pesa to Paybill 123456, Acc: FUNDILINK123.")
+    if "hi" in incoming_msg or "hello" in incoming_msg:
+        msg.body("👋 Welcome to FundiLink!\nWhat service do you need? (e.g., plumber, electrician)")
     else:
-        response.message("Sorry, I didn’t understand that. Try typing: plumber, electrician, or hi.")
+        msg.body("🤖 Sorry, I didn’t understand that. Please type 'hi' to get started.")
 
-    return PlainTextResponse(str(response))
+    return Response(content=str(resp), media_type="application/xml")
+
+# ✅ Register user (client or fundi)
+@app.post("/register")
+def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    existing_user = crud.get_user_by_phone(db, user.phone)
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Phone number already registered.")
+    return crud.create_user(db, user)
+
+# ✅ Search for services by category and location
+@app.get("/services/search")
+def search_services(category: str, location: str, db: Session = Depends(get_db)):
+    services = crud.search_services(db, category, location)
+    if not services:
+        raise HTTPException(status_code=404, detail="No services found.")
+    return services
+
+# ✅ Create a booking
+@app.post("/book")
+def create_booking(booking: schemas.BookingCreate, db: Session = Depends(get_db)):
+    return crud.create_booking(db, booking)
+
+# ✅ Confirm payment
+@app.put("/confirm_payment/{booking_id}")
+def confirm_payment(booking_id: int, db: Session = Depends(get_db)):
+    updated = crud.update_payment_status(db, booking_id, "paid")
+    if not updated:
+        raise HTTPException(status_code=404, detail="Booking not found.")
+    return {"message": "Payment confirmed", "booking_id": booking_id}
