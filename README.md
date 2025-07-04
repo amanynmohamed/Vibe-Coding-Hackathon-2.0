@@ -74,15 +74,19 @@ Here’s a sample conversation between a user and FundiLink's WhatsApp bot:
 ## 💬 Sample WhatsApp Flow
 
 User: hi
+
 Bot: 👋 Welcome to FundiLink! What service do you need? (e.g., plumber, electrician)
 
 User: plumber
+
 Bot: ✅ Showing available plumbers near your location...
 
 User: book plumber
+
 Bot: 🗓️ Booking confirmed. Please confirm payment to proceed.
 
 User: paid
+
 Bot: ✅ Payment received. A fundi will contact you shortly.
 
 ## 📂 Project Structure
