@@ -37,18 +37,49 @@ Below is a sample conversation between a user and the FundiLink bot on WhatsApp:
 
 ## 📂 Project Structure
 
+```text
 FundiLink/
-├── main.py # FastAPI app and routes
-├── crud.py # Business logic
-├── models.py # SQLAlchemy models
-├── schemas.py # Pydantic schemas
-├── database.py # Database connection
-├── requirements.txt # Installed dependencies
-├── README.md # Project documentation
-└── screenshot.png # WhatsApp bot chat image 
-
+├── main.py             # FastAPI app and routes
+├── crud.py             # Business logic
+├── models.py           # SQLAlchemy models
+├── schemas.py          # Pydantic schemas
+├── database.py         # Database connection
+├── requirements.txt    # Installed dependencies
+├── README.md           # Project documentation
+└── screenshot.png      # WhatsApp bot chat image
 
 ---
+
+## **👥 Contributors**
+
+<table>
+  <tr>
+    <td align="center" width="25%">
+      <a href="https://github.com/amanynabil" target="_blank">
+        <img src="https://avatars.githubusercontent.com/u/0?v=4" width="100px;" alt="Amany Nabil Ahmed"/>
+        <br /><b>Amany Nabil Ahmed</b>
+      </a>
+    </td>
+    <td align="center" width="25%">
+      <a href="https://github.com/nakhanu" target="_blank">
+        <img src="https://avatars.githubusercontent.com/u/131362156?v=4" width="100px;" alt="Sophia Nakhanu"/>
+        <br /><b>Sophia Nakhanu</b>
+      </a>
+    </td>
+    <td align="center" width="25%">
+      <a href="https://github.com/RICCOM" target="_blank">
+        <img src="https://avatars.githubusercontent.com/u/0?v=4" width="100px;" alt="Eric Munjuri"/>
+        <br /><b>Eric Munjuri</b>
+      </a>
+    </td>
+    <td align="center" width="25%">
+      <a href="https://github.com/steviedave" target="_blank">
+        <img src="https://avatars.githubusercontent.com/u/0?v=4" width="100px;" alt="Stephen David Oduor"/>
+        <br /><b>Stephen David Oduor</b>
+      </a>
+    </td>
+  </tr>
+</table>
 
 
 ## ⚙️ Setup Instructions
@@ -59,14 +90,4 @@ FundiLink/
 git clone https://github.com/amanynmohamed/Vibe-Coding-Hackathon-2.0.git
 cd Vibe-Coding-Hackathon-2.0
 
-👨‍💻 Team
-This project was built during the Vibe Coding Hackathon 2.0 by:
-
-Sophia Nakhanu
-
-Amany Nabil Mohamed
-
-Eric Munjuri
-
-Stephen David Oduor
-
+---
