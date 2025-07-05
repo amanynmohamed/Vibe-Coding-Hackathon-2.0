@@ -89,6 +89,27 @@ User: paid
 
 Bot: ✅ Payment received. A fundi will contact you shortly.
 
+
+## 🔘 UI Preview: WhatsApp Button
+As part of the frontend enhancements, we implemented a simple standalone HTML file that displays a floating *"Chat with us on WhatsApp"* button. When clicked, it opens a WhatsApp chat window linked to the FundiLink service number.
+### 📎 File Location:
+/whatsapp-button-project/whatsapp-button.html
+### ✅ Features:
+- Green WhatsApp-style button
+- Clean UI with hover effect
+- Clickable link to open chat: [+201114714712](https://wa.me/201114714712)
+- Easy to embed into any webpage or landing screen
+### 🖼️ Button Preview (Design Example):
+![WhatsApp Button Preview](./whatsapp-button-project/whatsapp_button_preview.png)
+```html
+<a
+  class="whatsapp-button"
+  href="https://wa.me/201114714712"
+  target="_blank"
+>
+  Chat with us on WhatsApp
+</a>
+
 ## 📂 Project Structure
 
 ```text
