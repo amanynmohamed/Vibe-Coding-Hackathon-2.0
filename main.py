@@ -1,4 +1,8 @@
 from fastapi import FastAPI, Depends, HTTPException, Request
+from payment_routes import router as payment_router
+
+app = FastAPI()
+app.include_router(payment_router)
 from fastapi.responses import Response
 from sqlalchemy.orm import Session
 from twilio.twiml.messaging_response import MessagingResponse
@@ -6,14 +10,15 @@ from twilio.twiml.messaging_response import MessagingResponse
 import models, crud, schemas
 from database import SessionLocal, engine
 
-from models import Base
-Base.metadata.create_all(bind=engine)
-
-# ✅ Create FastAPI app BEFORE using it
+# ✅ Create the FastAPI app early
 app = FastAPI()
 
 # ✅ Create database tables
 models.Base.metadata.create_all(bind=engine)
+
+# ✅ Import and include payment router
+from payment_routes import router as payment_router
+app.include_router(payment_router)
 
 # ✅ Dependency to get DB session
 def get_db():
@@ -23,14 +28,17 @@ def get_db():
     finally:
         db.close()
 
+# ✅ Root endpoint
+@app.get("/")
+def read_root():
+    return {"message": "Hello, FundiLink!"}
+
 # ✅ WhatsApp webhook endpoint
 @app.post("/whatsapp")
 async def whatsapp_webhook(request: Request):
-
     form = await request.form()
     incoming_msg = form.get("Body", "").strip().lower()
 
-    # Respond with a welcome message
     resp = MessagingResponse()
     msg = resp.message()
 
@@ -52,13 +60,10 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 # ✅ Create a service (for fundis)
 @app.post("/services")
 def create_service(service: schemas.ServiceCreate, db: Session = Depends(get_db)):
-    # Optional: check if provider exists and is a fundi
     provider = crud.get_user_by_id(db, service.provider_id)
     if not provider or provider.role != "fundi":
         raise HTTPException(status_code=400, detail="Invalid provider ID or user is not a fundi.")
-    
     return crud.create_service(db, service)
-
 
 # ✅ Search for services by category and location
 @app.get("/services/search")
